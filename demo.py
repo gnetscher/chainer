@@ -8,3 +8,17 @@ def run_rcnn():
 	imProd = ch.ImDataFile()
 	im     = imProd.produce(imName)
 	return imProd
+
+def run_test():
+    imPath = 'try/'
+    # imName = osp.join(imPath, '0.jpg')
+    # imProd = ch.ImDataFile()
+
+    imProd = ch.ImDataDir()
+    iter_ = imProd.produce(imPath)
+    for it in iter_:
+        print '~~~~~~ IMAGE ~~~~~~'
+        #print it
+
+if __name__ == '__main__':
+    run_test()
