@@ -88,12 +88,38 @@ class ImDataDir(ChainObject):
 #Consumes a video and saves frames to directory.
 class Video2Ims(ChainObject):
     """
-        TODO: this
+        mostly borrowed from vatic script
     """
     _consumer_ = [str]
     _producer_ = [str]
     def __init__(self, prms=None):
         ChainObject.__init__(self, prms)
+
+    def produce(self, ip):
+        pass
+        # try:
+        #     os.makedirs(args.output)
+        # except:
+        #     pass
+        # sequence = ffmpeg.extract(args.video)
+        # try:
+        #     for frame, image in enumerate(sequence):
+        #         if frame % 100 == 0:
+        #             print ("Decoding frames {0} to {1}"
+        #                 .format(frame, frame + 100))
+        #         if not args.no_resize:
+        #             image.thumbnail((args.width, args.height), Image.BILINEAR)
+        #         path = Video.getframepath(frame, args.output)
+        #         try:
+        #             image.save(path)
+        #         except IOError:
+        #             os.makedirs(os.path.dirname(path))
+        #             image.save(path)
+        # except:
+        #     if not args.no_cleanup:
+        #         print "Aborted. Cleaning up..."
+        #         shutil.rmtree(args.output)
+        #     raise
 
 ##
 #Consumes image and produces detection bounding box

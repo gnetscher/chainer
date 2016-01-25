@@ -17,7 +17,7 @@ def run_test():
     iter_ = imProd.produce(imPath)
     for it in iter_:
         print '~~~~~~ IMAGE ~~~~~~'
-        print it
+        #print it
 
 if __name__ == '__main__':
     run_test()
