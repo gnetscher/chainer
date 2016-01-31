@@ -121,13 +121,4 @@ class Video2Ims(ChainObject):
         #         shutil.rmtree(args.output)
         #     raise
 
-##
-#Consumes image and produces detection bounding box
-class Im2RCNNDet(ChainObject):
-    _consumer_ = [np.ndarray]
-    _producer_ = [np.ndarray]
-    def __init__(self, prms=None):
-        ChainObject.__init__(self, prms)
-		
-    def produce(self, ip):
-        pass
+

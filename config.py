@@ -1,6 +1,6 @@
 from easydict import EasyDict as edict
 from pkg.pycaffe_utils import other_utils as ou 
-from os import paths as osp
+from os import path as osp
 import os
 
 def get_basic_paths():
@@ -13,7 +13,7 @@ def get_basic_paths():
 def caffe_model_paths():
 	paths = get_basic_paths()	
 	paths.caffemodel = edict()
-	paths.caffemodel.dr = osp.join(paths.basedr, 'caffe_models')
+	paths.caffemodel.dr = osp.join(paths.base.dr, 'caffe_models')
 	#Faster-rcnn model
 	paths.caffemodel.fasterrcnn    = edict()
 	paths.caffemodel.fasterrcnn.dr = osp.join(paths.caffemodel.dr, 
@@ -36,24 +36,27 @@ def get_caffe_net_files(netName):
 	oPrms.solverFile = ''
 	#Train file
 	oPrms.defFile    = ''
-	if netName = 'vgg16':
+	if netName == 'vgg16':
 		oPrms.netFile = 'VGG16.caffemodel'
 		oPrms.defFile = ''
 		baseDr        = paths.caffemodel.imagenet.dr
-	elif netName = 'vgg16-rcnn':
+	elif netName == 'vgg16-pascal-rcnn':
 		oPrms.netFile = 'VGG16_faster_rcnn_final.caffemodel'
 		oPrms.deployFile = 'test.prototxt'
 		oPrms.solFile    = 'solver.prototxt' 
 		oPrms.defFile    = 'train.prototxt' 
-		baseDr           = paths.caffemodel.fasterrcnn.dr
-	elif netName = 'zf-rcnn':
+		baseDr           = osp.join(paths.caffemodel.fasterrcnn.dr,'VGG16')
+	elif netName == 'zf-pascal-rcnn':
 		oPrms.netFile = 'ZF_faster_rcnn_final.caffemodel'
 		oPrms.defFile = ''
+		baseDr           = paths.caffemodel.fasterrcnn.dr
+	for k in oPrms.keys():
+		oPrms[k] = osp.join(baseDr, oPrms[k])
 	return oPrms
 
 ##
 #Default class names for some datasets
-def get_class_names(dataSet='pascal'):
+def dataset2classnames(dataSet='pascal'):
 	if dataSet == 'pascal':
 		cls = list(('__background__',
            'aeroplane', 'bicycle', 'bird', 'boat',
@@ -74,5 +77,7 @@ def get_rcnn_prms(**kwargs):
 	#Detection Confidence
 	dArgs.confThresh = 0.8
 	#What classnames was the detector trained on.
-	dArgs.detDataSet = 'pascal'
+	dArgs.trainDataSet = 'pascal'
+	#The net to be used 
+	dArgs.netName    = 'vgg16-pascal-rcnn'
 	return dArgs	
