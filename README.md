@@ -10,6 +10,7 @@ class MyModule(ch.ChainObject):
   #Define the type of objects that are consumed/produced by the module
   _consumer_ = [str]
   _producer_ = [str]
+  
   def __init__(self, prms={}):
     '''
       prms: A dictionary of parameters which influence how what is being
