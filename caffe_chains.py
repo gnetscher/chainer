@@ -2,6 +2,8 @@ import chain as ch
 import caffe
 import config as cfg
 import numpy as np
+from fast_rcnn.test import im_detect
+from fast_rcnn.nms_wrapper import nms 
 
 ##
 #Consumes image and produces detection bounding box
@@ -22,4 +24,5 @@ class Im2RCNNDet(ch.ChainObject):
 		self.cls_ = cfg.dataset2classnames(self.prms_.trainDataSet) 
 	
 	def produce(self, ip):
-		pass
+		scores, bbox = im_detect(self.net_, ip)
+		return scores, bbox
