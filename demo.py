@@ -27,15 +27,13 @@ def run_rcnn():
 	return im, allDet
 
 def run_test():
-    imPath = 'try/'
+    imPath = 'try/Falls_Angle1Lighting1.mp4'
     # imName = osp.join(imPath, '0.jpg')
     # imProd = ch.ImDataFile()
 
-    imProd = ch.ImDataDir()
-    iter_ = imProd.produce(imPath)
-    for it in iter_:
-        print '~~~~~~ IMAGE ~~~~~~'
-        #print it
+    imProd = ch.Video2Ims(prms={'op_dir': 'op'})
+    print imProd.produce(imPath)
+
 
 if __name__ == '__main__':
     run_test()

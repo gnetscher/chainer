@@ -7,6 +7,11 @@ import easydict
 from easydict import EasyDict as edict
 import collections as co
 import glob
+import shutil
+
+import ffmpeg
+
+print ffmpeg.__file__
 
 class ChainObject(object):
     '''
@@ -111,7 +116,7 @@ class ImDataDir(ChainObject):
 
 
 ##
-#Consumes a video and saves frames to directory.
+#Consumes a video path str and saves frames to directory returning the directory path str.
 class Video2Ims(ChainObject):
     """
         mostly borrowed from vatic script
@@ -119,32 +124,59 @@ class Video2Ims(ChainObject):
     _consumer_ = [str]
     _producer_ = [str]
     def __init__(self, prms=None):
-        ChainObject.__init__(self, prms)
+        """
+        :param prms: directory of parameters in this case containing only a possible output dir
+                     e.g., {'op_dir': '~/Desktop/'}
+                    if None, the input directory is used when produce is called
+        :return:
+        """
+        print prms
+        try:
+            op_dir = prms['op_dir']
+        except:
+            # wait to specify upon learning input video directory
+            op_dir = None
+        print op_dir
+        self.prms_ = {'op_dir': op_dir}
+        ChainObject.__init__(self, self.prms_)
 
     def produce(self, ip):
-        pass
-        # try:
-        #     os.makedirs(args.output)
-        # except:
-        #     pass
-        # sequence = ffmpeg.extract(args.video)
-        # try:
-        #     for frame, image in enumerate(sequence):
-        #         if frame % 100 == 0:
-        #             print ("Decoding frames {0} to {1}"
-        #                 .format(frame, frame + 100))
-        #         if not args.no_resize:
-        #             image.thumbnail((args.width, args.height), Image.BILINEAR)
-        #         path = Video.getframepath(frame, args.output)
-        #         try:
-        #             image.save(path)
-        #         except IOError:
-        #             os.makedirs(os.path.dirname(path))
-        #             image.save(path)
-        # except:
-        #     if not args.no_cleanup:
-        #         print "Aborted. Cleaning up..."
-        #         shutil.rmtree(args.output)
-        #     raise
+
+
+        def getframepath(frame, base = None):
+            l1 = frame / 10000
+            l2 = frame / 100
+            path = "{0}/{1}/{2}.jpg".format(l1, l2, frame)
+            if base is not None:
+                path = "{0}/{1}".format(base, path)
+            return path
+
+        if self.prms_['op_dir'] is None:
+            op_dir = os.path.dirname(ip)
+        else:
+            op_dir = self.prms_['op_dir']
+        try:
+            os.makedirs(op_dir)
+        except:
+            pass
+        sequence = ffmpeg.extract(ip)
+        try:
+            for frame, image in enumerate(sequence):
+                if frame % 100 == 0:
+                    print ("Decoding frames {0} to {1}"
+                        .format(frame, frame + 100))
+                path = getframepath(frame, op_dir)
+                try:
+                    image.save(path)
+                except IOError:
+                    os.makedirs(os.path.dirname(path))
+                    image.save(path)
+        except:
+            print "ffmpeg may not be installed"
+            print "Aborted. Cleaning up..."
+            shutil.rmtree(op_dir)
+            raise
+
+        return op_dir
 
 
