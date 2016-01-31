@@ -34,6 +34,20 @@ class ChainObject(object):
     def produce(self, ip=None):
         return ip
 
+
+class Chainer(object):
+	'''
+		class that strings together chains
+	'''
+	def __init__(self, objList=[]):
+		self.chainObjs_ = objList
+
+	def produce(self, ip):
+		ip = copy.deepcopy(ip)
+		for o in self.chainObjs_:
+			ip = o.produce(ip)
+		return ip
+
 ##
 #Consumes and produces image data
 class ImData(ChainObject):
@@ -47,7 +61,7 @@ class ImData(ChainObject):
 		
     def produce(self, ip):
         return copy.deepcopy(ip)
-		
+
 ##
 #Consumes image name and produces image
 class ImDataFile(ChainObject):
@@ -59,6 +73,18 @@ class ImDataFile(ChainObject):
     def produce(self, ip):
         im = scm.imread(ip)
         return im
+
+##
+#Consumes RGB image and converts to BGR
+class RGB2BGR(ChainObject):
+	_consumer_ = [np.ndarray]
+	_producer_ = [np.ndarray]
+	def __init__(self, prms=None):
+		ChainObject.__init__(self, prms)
+
+	def produce(self, ip):
+		return ip[:,:,[2,1,0]]
+
 
 ##
 #Consumes a directory and produces an iterator over images

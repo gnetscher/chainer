@@ -19,10 +19,12 @@ def image_reader():
 def run_rcnn():
 	imName = get_sample_imname()
 	imProd = ch.ImDataFile()
-	im     = imProd.produce(imName)
+	bgr    = ch.RGB2BGR()
 	rcnn   = cc.Im2RCNNDet()
-	sc, bbox = rcnn.produce(im)
-	return im, sc, bbox
+	chain  = ch.Chainer([imProd, bgr, rcnn])
+	allDet = chain.produce(imName) 
+	im     = imProd.produce(imName)
+	return im, allDet
 
 def run_test():
     imPath = 'try/'
