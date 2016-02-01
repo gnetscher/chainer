@@ -53,3 +53,14 @@ class Im2RCNNDet(ch.ChainObject):
 			inds = np.where(dets[:, -1] >= self.prms_.confThresh)[0]
 			allDet[cl]   = copy.deepcopy(dets[inds, :4])
 		return ip, allDet
+
+##
+#Consumes image and produces detection of people
+class Im2PersonDet(Im2RCNNDet):
+	def __init__(self, prms={}):
+		Im2RCNNDet.__init__(self, prms)
+
+	def produce(self, ip):
+		ip, allDet = super(Im2PersonDet, self).produce(ip)
+		return ip, allDet['person']
+		

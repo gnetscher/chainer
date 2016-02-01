@@ -3,6 +3,7 @@ import chain as ch
 import caffe_chains as cc
 import image_chains as imc
 import data_chains as dc
+import vis_chains as vc
 from os import path as osp
 
 #Sample image used in the demo
@@ -32,8 +33,9 @@ def run_rcnn_iter():
 	dataSrc   = dc.GetDataDir()
 	src2Im    = imc.DataDir2IterIms()
 	bgr       = imc.RGB2BGR()
-	rcnn   = cc.Im2RCNNDet()
-	chain  = ch.Chainer([dataSrc, src2Im, bgr, rcnn])
+	rcnn   = cc.Im2PersonDet()
+	vis    = vc.VisImBBox()
+	chain  = ch.Chainer([dataSrc, src2Im, bgr, rcnn, vis])
 	return chain
 
 def run_test():
