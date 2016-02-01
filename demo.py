@@ -27,12 +27,15 @@ def run_rcnn():
 	return im, allDet
 
 def run_test():
-    imPath = 'try/Falls_Angle1Lighting1.mp4'
-    # imName = osp.join(imPath, '0.jpg')
-    # imProd = ch.ImDataFile()
+    vidPath = 'try/Falls_Angle1Lighting1.mp4'
+    imProd  = ch.Video2Ims()
+    imPath  = imProd.produce(vidPath)
+    itProd  = ch.ImDataDir()
+    list_   = itProd.produce(imPath)
+    for i, item in enumerate(list_):
+        print '~~~~Image {0}~~~~'.format(i)
+        print item
 
-    imProd = ch.Video2Ims(prms={'op_dir': 'op'})
-    print imProd.produce(imPath)
 
 
 if __name__ == '__main__':
