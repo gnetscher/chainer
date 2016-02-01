@@ -92,7 +92,7 @@ class RGB2BGR(ChainObject):
 
 
 ##
-#Consumes a directory and produces an iterator over images
+#Consumes a directory and produces an iterator over images recursively searching all folders
 class ImDataDir(ChainObject):
     """
         assumes all images are jpg or png
@@ -106,11 +106,15 @@ class ImDataDir(ChainObject):
         imlist = []
         extns = ['jpg', 'jpeg', 'JPG', 'JPEG', 'png', 'PNG']
 
-        for extn in extns:
-            path = os.path.join(ip, '*.' + extn)
-            for img in glob.glob(path):
-                im = scm.imread(img)
-                imlist.append(im)
+        for dirpath, dirnames, filenames in os.walk(ip):
+            for name in dirnames:
+                head = str(dirpath) + '/' + str(name)
+                for extn in extns:
+                    path = os.path.join(head, '*.' + extn)
+                    print path
+                    for img in glob.glob(path):
+                        im = scm.imread(img)
+                        imlist.append(im)
 
         return iter(imlist)
 
@@ -119,8 +123,9 @@ class ImDataDir(ChainObject):
 #Consumes a video path str and saves frames to directory returning the directory path str.
 class Video2Ims(ChainObject):
     """
-        mostly borrowed from vatic script
+        output directory can optionally be given as a parameter as {'op_dir': <path>}
     """
+
     _consumer_ = [str]
     _producer_ = [str]
     def __init__(self, prms=None):
@@ -130,7 +135,6 @@ class Video2Ims(ChainObject):
                     if None, the input directory is used when produce is called
         :return:
         """
-        print prms
         try:
             op_dir = prms['op_dir']
         except:
@@ -141,7 +145,6 @@ class Video2Ims(ChainObject):
         ChainObject.__init__(self, self.prms_)
 
     def produce(self, ip):
-
 
         def getframepath(frame, base = None):
             l1 = frame / 10000
@@ -178,5 +181,3 @@ class Video2Ims(ChainObject):
             raise
 
         return op_dir
-
-
