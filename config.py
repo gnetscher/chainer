@@ -1,7 +1,7 @@
 from easydict import EasyDict as edict
 from os import path as osp
 import os
-import chainer_utils as cu
+from chainer_utils import utils as cu
 
 def get_basic_paths():
 	paths = edict()
