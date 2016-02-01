@@ -1,6 +1,8 @@
 import numpy as np
 import chain as ch
 import caffe_chains as cc
+import image_chains as imc
+import data_chains as dc
 from os import path as osp
 
 #Sample image used in the demo
@@ -9,22 +11,30 @@ def get_sample_imname():
 	imName = osp.join(imPath, '0.jpg')
 	return imName
 
-#Testing the ImDataFile Module
+#Testing the File2Im Module
 def image_reader():
 	imName = get_sample_imname()
-	imProd = ch.ImDataFile()
+	imProd = imc.File2Im()
 	im     = imProd.produce(imName)
 	return imProd
 
 def run_rcnn():
 	imName = get_sample_imname()
-	imProd = ch.ImDataFile()
-	bgr    = ch.RGB2BGR()
+	imProd = imc.File2Im()
+	bgr    = imc.RGB2BGR()
 	rcnn   = cc.Im2RCNNDet()
 	chain  = ch.Chainer([imProd, bgr, rcnn])
-	allDet = chain.produce(imName) 
-	im     = imProd.produce(imName)
+	im, allDet = chain.produce(imName) 
 	return im, allDet
+
+
+def run_rcnn_iter():
+	dataSrc   = dc.GetDataDir()
+	src2Im    = imc.DataDir2IterIms()
+	bgr       = imc.RGB2BGR()
+	rcnn   = cc.Im2RCNNDet()
+	chain  = ch.Chainer([dataSrc, src2Im, bgr, rcnn])
+	return chain
 
 def run_test():
     vidPath = 'try/Falls_Angle1Lighting1.mp4'
@@ -35,7 +45,6 @@ def run_test():
     for i, item in enumerate(list_):
         print '~~~~Image {0}~~~~'.format(i)
         print item
-
 
 
 if __name__ == '__main__':

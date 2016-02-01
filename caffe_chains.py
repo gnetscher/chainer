@@ -52,4 +52,4 @@ class Im2RCNNDet(ch.ChainObject):
 			#Only keep detections with high confidence
 			inds = np.where(dets[:, -1] >= self.prms_.confThresh)[0]
 			allDet[cl]   = copy.deepcopy(dets[inds, :4])
-		return allDet
+		return ip, allDet
