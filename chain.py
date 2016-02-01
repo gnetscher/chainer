@@ -145,7 +145,6 @@ class Video2Ims(ChainObject):
         ChainObject.__init__(self, self.prms_)
 
     def produce(self, ip):
-
         def getframepath(frame, base = None):
             l1 = frame / 10000
             l2 = frame / 100
@@ -179,5 +178,4 @@ class Video2Ims(ChainObject):
             print "Aborted. Cleaning up..."
             shutil.rmtree(op_dir)
             raise
-
         return op_dir
