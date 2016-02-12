@@ -111,7 +111,6 @@ class ImDataDir(ChainObject):
                 head = str(dirpath) + '/' + str(name)
                 for extn in extns:
                     path = os.path.join(head, '*.' + extn)
-                    print path
                     for img in glob.glob(path):
                         im = scm.imread(img)
                         imlist.append(im)
@@ -179,3 +178,62 @@ class Video2Ims(ChainObject):
             shutil.rmtree(op_dir)
             raise
         return op_dir
+
+##
+#  given image directory create vatic text file
+class Ims2Txt(ChainObject):
+
+    _consumer_ = [str]
+    _producer_ = [str, [np.uint8, np.uint8, np.uint8, np.uint8], (str,)]
+    def __init__(self, prms=None):
+        ChainObject.__init__(self, prms)
+
+    def produce(self, ip):
+        pass
+
+##
+# Consumes a vatic text file and returns iterator over [frame, [box coordinates], (attributes)]
+class Txt2Labels(ChainObject):
+
+    _consumer_ = [str]
+    _producer_ = [str, [np.uint8, np.uint8, np.uint8, np.uint8], (str,)]
+    def __init__(self, prms=None):
+        """
+        :param prms: a set containing which contents to include
+        must be from {'box', 'label', 'attributes', 'occluded', 'lost', 'generated}
+        :return: iterator over list of lists containing vatic information ordered as
+        [frameNumber, [xmin, ymin, xmax, ymax], lostBool,
+            occludedBool, generatedBool, labelString, attributesStringList]
+        with the appropriate arguments ommitted
+        """
+        if prms is None:
+            self.returnSet = {'box', 'label', 'attributes'}
+        else:
+            self.returnSet = prms
+        ChainObject.__init__(self, prms)
+
+    def produce(self, ip):
+        outList = []
+        with open(ip, 'r') as f:
+            for line in f:
+                inList = []
+                row  = line.split()
+                inList.append(row[5])
+                if 'box' in self.returnSet:
+                    inList.append(row[1:5])
+                if 'lost' in self.returnSet:
+                    inList.append(bool(row[6]))
+                if 'occluded' in self.returnSet:
+                    inList.append(bool(row[7]))
+                if 'generated' in self.returnSet:
+                    inList.append(bool(row[8]))
+                if 'label' in self.returnSet:
+                    inList.append(row[9])
+                if 'attributes' in self.returnSet:
+                    inList.append(row[10:])
+                outList.append(inList)
+
+        return iter(outList)
+
+
+
