@@ -18,6 +18,10 @@ class ChainObject(object):
     _producer_ = [type(None)]
     def __init__(self, prms=None):
         self.prms_ = copy.deepcopy(prms)
+				#Redo the computation if True
+				#This is useful when data is cached
+				#and can be loaded
+				self.redo_ = False
 
     def _check_input(self, ip):
         assert(type(ip)) in self._consumer_, ('Object of type %s,\
