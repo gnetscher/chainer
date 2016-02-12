@@ -196,7 +196,7 @@ class Ims2Txt(ChainObject):
 class Txt2Labels(ChainObject):
 
     _consumer_ = [str]
-    _producer_ = [str, [np.uint8, np.uint8, np.uint8, np.uint8], (str,)]
+    _producer_ = [str, [np.uint8, np.uint8, np.uint8, np.uint8], [str,]]
     def __init__(self, prms=None):
         """
         :param prms: a set containing which contents to include
@@ -218,9 +218,9 @@ class Txt2Labels(ChainObject):
             for line in f:
                 inList = []
                 row  = line.split()
-                inList.append(row[5])
+                inList.append(int(row[5]))
                 if 'box' in self.returnSet:
-                    inList.append(row[1:5])
+                    inList.append([int(x) for x in row[1:5]])
                 if 'lost' in self.returnSet:
                     inList.append(bool(row[6]))
                 if 'occluded' in self.returnSet:
@@ -228,9 +228,9 @@ class Txt2Labels(ChainObject):
                 if 'generated' in self.returnSet:
                     inList.append(bool(row[8]))
                 if 'label' in self.returnSet:
-                    inList.append(row[9])
+                    inList.append(row[9].strip('"'))
                 if 'attributes' in self.returnSet:
-                    inList.append(row[10:])
+                    inList.append([x.strip('"') for x in row[10:]])
                 outList.append(inList)
 
         return iter(outList)
