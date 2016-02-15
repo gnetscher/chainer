@@ -42,13 +42,22 @@ class Chainer(object):
 	'''
 		class that strings together chains
 	'''
-	def __init__(self, objList=[], opBlobs=None):
+	def __init__(self, objList=[], opData=None):
 		'''
 			objList: a list of chains that need to be chained together
-			opData : what 
+			opData : The outputs that are desired
+							 eg: opData = [[1,0], [3,1]] means that output 0
+							 of module 1 and output 1 of module 3 need to be
+								returned. Remembering first module is number 0. 
 		'''
 		self.chainObjs_ = []
-		N  = len(objList)
+		if opData is None:
+			opData = [(-1,0)]
+		#DummyObject helps in easily getting the desired outputs
+		DummyObj = (ChainObject(), opData)
+		objList.append(DummyObj)
+		N       = len(objList)
+		self.N_ = N
 		#ip2opIdx[i] is a list that stores to what modules the o/p
 		#of ith module must be sent
 		self.ip2opIdx_ = []
@@ -78,14 +87,13 @@ class Chainer(object):
 			self.ipN_[n] = len(conn)
 			for ipLoc, cn in enumerate(conn):
 				modNum, ipNum = cn
-				if modNum == -1:
-					self.ip2opIdx_[n-1].append([n, ipNum, ipLoc])
-				else:
-					assert modNum < n, 'Modules can only be chained in\
-                feedforward chains'
-					#Put the ipNum^{th} op of modNum^{th} module at 
-					#ipLoc in the inputs of nth module 
-					self.ip2opIdx_[modNum].append([n, ipNum, ipLoc]) 	
+				if modNum < 0:
+					modNum = n + modNum
+				assert modNum < n, 'Modules can only be chained in\
+							feedforward chains'
+				#Put the ipNum^{th} op of modNum^{th} module at 
+				#ipLoc in the inputs of nth module 
+				self.ip2opIdx_[modNum].append([n, ipNum, ipLoc]) 	
 	
 	def reset_ips(self):
 		del self.ips_
@@ -100,7 +108,10 @@ class Chainer(object):
 		self.ips_[0] = [ip]
 		for n, o in enumerate(self.chainObjs_):
 			modIp = self.ips_[n]
-			op    = o.produce(*modIp)
+			if len(modIp) == 1:
+				op = o.produce(modIp[0])
+			else:
+				op = o.produce(modIp)
 			for mi in self.ip2opIdx_[n]:
 				#Determine the module that will take the current
 				#output as the input
@@ -111,7 +122,7 @@ class Chainer(object):
 					assert ipNum == 0, 'Previous module produces only 1 o/p'
 					tmpOp = copy.deepcopy(op)
 				self.ips_[modNum][ipLoc] = tmpOp 
-		return op
+		return self.ips_[self.N_-1]
 
 ##
 #Consumes and produces image data

@@ -49,7 +49,7 @@ def save_rcnn_op():
 	rcnn     = cc.Im2PersonDet()
 	imKey    = mc.File2SplitLast()
 	chain    = ch.Chainer([dataSrc, src2Name, name2Im, bgr,\
-             rcnn, (imKey, [(1,0)])])
+             rcnn, (imKey, [(1,0)])], opData=[(-1,0),(-2,1)])
 	return chain
 
 def run_test():
