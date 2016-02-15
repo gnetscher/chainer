@@ -6,12 +6,6 @@ import scipy.misc as scm
 import easydict
 from easydict import EasyDict as edict
 import collections as co
-import glob
-import shutil
-
-import ffmpeg
-
-print ffmpeg.__file__
 
 class ChainObject(object):
     '''
@@ -24,6 +18,10 @@ class ChainObject(object):
     _producer_ = [type(None)]
     def __init__(self, prms=None):
         self.prms_ = copy.deepcopy(prms)
+				#Redo the computation if True
+				#This is useful when data is cached
+				#and can be loaded
+				self.redo_ = False
 
     def _check_input(self, ip):
         assert(type(ip)) in self._consumer_, ('Object of type %s,\
@@ -47,7 +45,7 @@ class Chainer(object):
 	def __init__(self, objList=[]):
 		self.chainObjs_ = objList
 
-	def produce(self, ip):
+	def produce(self, ip=None):
 		ip = copy.deepcopy(ip)
 		for o in self.chainObjs_:
 			ip = o.produce(ip)
@@ -244,6 +242,3 @@ class Txt2Labels(ChainObject):
                 outList.append(inList)
 
         return iter(outList)
-
-
-
