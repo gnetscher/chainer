@@ -42,11 +42,7 @@ class Chainer(object):
 	'''
 		class that strings together chains
 	'''
-	def __init__(self, objList=[], opBlobs=None):
-		'''
-			objList: a list of chains that need to be chained together
-			opData : what 
-		'''
+	def __init__(self, objList=[]):
 		self.chainObjs_ = []
 		N  = len(objList)
 		#ip2opIdx[i] is a list that stores to what modules the o/p
@@ -68,11 +64,11 @@ class Chainer(object):
 					conn = [(-1,0)]
 				else:
 					assert len(o) == 2, 'Format not recognized'
+					self.chainObjs_.append(o[0])
 					obj, conn = o
 					assert type(conn) == list, 'Connectivity must be list'	
 			else:
 				obj, conn = o, [(-1,0)]
-			self.chainObjs_.append(obj)
 			if n == 0:
 				continue
 			self.ipN_[n] = len(conn)
@@ -88,28 +84,23 @@ class Chainer(object):
 					self.ip2opIdx_[modNum].append([n, ipNum, ipLoc]) 	
 	
 	def reset_ips(self):
-		del self.ips_
-		self.ips_ = []
 		for n in self.ipN_:
 			arr = [None] * int(n)
-			self.ips_.append(arr)
+			del self.ips_[n]
+			print (n, len(self.ips_))
+			self.ips_[n] = arr	
 
 	def produce(self, ip=None):
 		self.reset_ips()
 		ip = copy.deepcopy(ip)
-		self.ips_[0] = [ip]
+		self.ips_[0] = ip
 		for n, o in enumerate(self.chainObjs_):
 			modIp = self.ips_[n]
-			op    = o.produce(*modIp)
+			op    = o.produce(modIp)
 			for mi in self.ip2opIdx_[n]:
 				#Determine the module that will take the current
 				#output as the input
 				modNum, ipNum, ipLoc = mi
-				if type(op) == tuple:
-					tmpOp = copy.deepcopy(op[ipNum])
-				else:
-					assert ipNum == 0, 'Previous module produces only 1 o/p'
-					tmpOp = copy.deepcopy(op)
-				self.ips_[modNum][ipLoc] = tmpOp 
+				self.ips_[modNum][ipLoc] = copy.deepcopy(op[ipNum]) 
 		return op
 

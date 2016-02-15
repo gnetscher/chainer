@@ -31,7 +31,7 @@ class Im2RCNNDet(ch.ChainObject):
 		bestClass  = np.argmax(scores,axis=1)
 		bestScore  = np.max(scores, axis=1)
 		allDet     = edict()
-		for cl in self.prms_.targetClass:	
+		for cl in [self.prms_.targetClass]:	
 			clsIdx = self.cls_.index(cl)
 			#Get all the boxes that belong to the desired class
 			idx    = bestClass == clsIdx
