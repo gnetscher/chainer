@@ -23,7 +23,7 @@ class VisImBBox(ch.ChainObject):
 		self.prms_.ax.cla()
 		self.prms_.ax.imshow(im)
 		for b in bbox:
-			x1, y1, x2, y2 = np.floor(b)
+			x1, y1, x2, y2, conf = np.floor(b)
 			self.prms_.ax.plot([x1, x1], [y1, y2], **self.prms_.drawOpts)
 			self.prms_.ax.plot([x1, x2], [y2, y2], **self.prms_.drawOpts)
 			self.prms_.ax.plot([x2, x2], [y2, y1], **self.prms_.drawOpts)

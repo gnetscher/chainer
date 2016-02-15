@@ -36,8 +36,9 @@ def run_rcnn_iter():
 	src2Im    = imc.DataDir2IterIms()
 	bgr       = imc.RGB2BGR()
 	rcnn   = cc.Im2PersonDet()
-	#vis    = vc.VisImBBox()
-	#chain  = ch.Chainer([dataSrc, src2Im, bgr, rcnn, vis])
+	vis    = vc.VisImBBox()
+	chain  = ch.Chainer([dataSrc, src2Im, bgr, rcnn, 
+					 (vis, [[1,0],[-1,0]])])
 	return chain
 
 
