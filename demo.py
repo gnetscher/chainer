@@ -9,12 +9,13 @@ from os import path as osp
 
 #Sample image used in the demo
 def get_sample_imname():
-	imPath = '/mnt/HardDrive/data/try/outimg_Angle1Lighting1'	
-	imName = osp.join(imPath, '0.jpg')
-	return imName
+    imPath = '/mnt/HardDrive/data/try/outimg_Angle1Lighting1'
+    imName = osp.join(imPath, '0.jpg')
+    return imName
 
 #Testing the File2Im Module
 def image_reader():
+
 	imName = get_sample_imname()
 	imProd = imc.File2Im()
 	im     = imProd.produce(imName)
@@ -52,14 +53,21 @@ def save_rcnn_op():
 	return chain
 
 def run_test():
-    vidPath = 'try/Falls_Angle1Lighting1.mp4'
-    imProd  = ch.Video2Ims()
-    imPath  = imProd.produce(vidPath)
-    itProd  = ch.ImDataDir()
-    list_   = itProd.produce(imPath)
-    for i, item in enumerate(list_):
-        print '~~~~Image {0}~~~~'.format(i)
-        print item
+    # vidPath = 'try/Falls_Angle1Lighting1.mp4'
+    # imProd  = ch.Video2Ims()
+    # imPath  = imProd.produce(vidPath)
+    # itProd  = ch.ImDataDir()
+    # list_   = itProd.produce(imPath)
+    # for i, item in enumerate(list_):
+    #     print '~~~~Image {0}~~~~'.format(i)
+    #     print item
+    vaticID = 'Angle1Lighting1'
+    vaticProd = ch.Ims2Txt()
+    txtPath = vaticProd.produce(vaticID)
+    labelProd = ch.Txt2Labels()
+    test =  labelProd.produce(txtPath)
+    for a in test:
+        print a
 
 
 if __name__ == '__main__':
