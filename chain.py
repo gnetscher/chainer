@@ -196,7 +196,7 @@ class Ims2Txt(ChainObject):
         sysCall = '(' + \
                   'cd ~/vatic/vatic; ' + \
                   'turkic dump {0} -o {1} --merge --merge-threshold 0.5;'.format(ip, vaticFile) + \
-                  'echo moxie100 | sudo -S mv {0} {1}'.format(vaticFile, basePath)  + \
+                  'mv {0} {1}'.format(vaticFile, basePath)  + \
                   ')'
         os.system(sysCall)
         return os.path.join(basePath, vaticFile)
