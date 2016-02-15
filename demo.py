@@ -35,7 +35,9 @@ def run_test():
     # for i, item in enumerate(list_):
     #     print '~~~~Image {0}~~~~'.format(i)
     #     print item
-    txtPath   = 'try/output_Angle1Lighting1.txt'
+    vaticID = 'Angle1Lighting1'
+    vaticProd = ch.Ims2Txt()
+    txtPath = vaticProd.produce(vaticID)
     labelProd = ch.Txt2Labels()
     test =  labelProd.produce(txtPath)
     for a in test:

@@ -180,23 +180,33 @@ class Video2Ims(ChainObject):
         return op_dir
 
 ##
-#  given image directory create vatic text file
+#  given vatic identifier string create vatic text file path
 class Ims2Txt(ChainObject):
 
     _consumer_ = [str]
-    _producer_ = [str, [np.uint8, np.uint8, np.uint8, np.uint8], (str,)]
+    _producer_ = [str]
     def __init__(self, prms=None):
         ChainObject.__init__(self, prms)
 
     def produce(self, ip):
-        pass
+        # turkic dump identifier -o output.txt --merge --merge-threshold 0.5
+        basePath  = str(os.getcwd())
+        vaticFile = 'vaticOutput{0}.txt'.format(ip)
+        print vaticFile, ' ', basePath
+        sysCall = '(' + \
+                  'cd ~/vatic/vatic; ' + \
+                  'turkic dump {0} -o {1} --merge --merge-threshold 0.5;'.format(ip, vaticFile) + \
+                  'echo moxie100 | sudo -S mv {0} {1}'.format(vaticFile, basePath)  + \
+                  ')'
+        os.system(sysCall)
+        return os.path.join(basePath, vaticFile)
 
 ##
-# Consumes a vatic text file and returns iterator over [frame, [box coordinates], (attributes)]
+# Consumes a vatic text file path and returns iterator over [frame, [box coordinates], (attributes)]
 class Txt2Labels(ChainObject):
 
     _consumer_ = [str]
-    _producer_ = [str, [np.uint8, np.uint8, np.uint8, np.uint8], [str,]]
+    _producer_ = [np.uint8, [np.uint8, np.uint8, np.uint8, np.uint8], str, [str]]
     def __init__(self, prms=None):
         """
         :param prms: a set containing which contents to include
