@@ -47,7 +47,6 @@ class RGB2BGR(ch.ChainObject):
 	def produce(self, ip):
 		return ip[:,:,[2,1,0]]
 
-
 ##
 #Consumes a directory and produces an iterator over images recursively searching all folders
 class DataDir2IterImNames(ch.ChainObject):
