@@ -87,7 +87,7 @@ def get_data_prms(**kwargs):
 def get_rcnn_prms(**kwargs):
 	dArgs = edict()
 	#Object class that needs to be detected
-	dArgs.targetClass = ['person']
+	dArgs.targetClass = 'person'
 	#NMS
 	dArgs.nmsThresh  = 0.3
 	#Detection Confidence
@@ -103,6 +103,7 @@ def get_rcnn_prms(**kwargs):
 	dArgs.prmStr = msq.get_sql_id(dbFile, dArgs)	
 	#verify that the target class is detectable by the model
 	allCls  = dataset2classnames(dArgs.trainDataSet)
-	assert set(dArgs.targetClass).issubset(set(allCls)),\
-		'%s cannot be detected' % dArgs.targetClass
+	assert dArgs.targetClass in allCls
+	#assert set(dArgs.targetClass).issubset(set(allCls)),\
+	#	'%s cannot be detected' % dArgs.targetClass
 	return dArgs	

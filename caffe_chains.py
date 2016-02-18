@@ -31,7 +31,7 @@ class Im2RCNNDet(ch.ChainObject):
 		bestClass  = np.argmax(scores,axis=1)
 		bestScore  = np.max(scores, axis=1)
 		allDet     = edict()
-		for cl in self.prms_.targetClass:	
+		for cl in [self.prms_.targetClass]:	
 			clsIdx = self.cls_.index(cl)
 			#Get all the boxes that belong to the desired class
 			idx    = bestClass == clsIdx
@@ -51,8 +51,8 @@ class Im2RCNNDet(ch.ChainObject):
 			dets = dets[keep, :]
 			#Only keep detections with high confidence
 			inds = np.where(dets[:, -1] >= self.prms_.confThresh)[0]
-			allDet[cl]   = copy.deepcopy(dets[inds, :4])
-		return ip, allDet
+			allDet[cl]   = copy.deepcopy(dets[inds])
+		return allDet
 
 ##
 #Consumes image and produces detection of people
@@ -61,6 +61,6 @@ class Im2PersonDet(Im2RCNNDet):
 		Im2RCNNDet.__init__(self, prms)
 
 	def produce(self, ip):
-		ip, allDet = super(Im2PersonDet, self).produce(ip)
-		return ip, allDet['person']
+		allDet = super(Im2PersonDet, self).produce(ip)
+		return allDet['person']
 		

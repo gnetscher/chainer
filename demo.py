@@ -2,6 +2,7 @@ import numpy as np
 import chain as ch
 import caffe_chains as cc
 import image_chains as imc
+import misc_chains as mc
 import data_chains as dc
 import vis_chains as vc
 from os import path as osp
@@ -36,7 +37,20 @@ def run_rcnn_iter():
 	bgr       = imc.RGB2BGR()
 	rcnn   = cc.Im2PersonDet()
 	vis    = vc.VisImBBox()
-	chain  = ch.Chainer([dataSrc, src2Im, bgr, rcnn, vis])
+	chain  = ch.Chainer([dataSrc, src2Im, bgr, rcnn, 
+					 (vis, [[1,0],[-1,0]])])
+	return chain
+
+
+def save_rcnn_op():
+	dataSrc  = dc.GetDataDir()
+	src2Name = imc.DataDir2IterImNames()
+	name2Im  = imc.File2Im()
+	bgr      = imc.RGB2BGR()
+	rcnn     = cc.Im2PersonDet()
+	imKey    = mc.File2SplitLast()
+	chain    = ch.Chainer([dataSrc, src2Name, name2Im, bgr,\
+             rcnn, (imKey, [(1,0)])], opData=[(-1,0),(-2,1)])
 	return chain
 
 def run_test():
