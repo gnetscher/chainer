@@ -188,14 +188,13 @@ class Ims2Txt(ChainObject):
     def __init__(self, prms=None):
         ChainObject.__init__(self, prms)
 
-    def produce(self, ip):
+    def produce(self, ip, vaticPath='~/vatic/vatic'):
         # turkic dump identifier -o output.txt --merge --merge-threshold 0.5
         basePath  = str(os.getcwd())
         vaticFile = 'vaticOutput{0}.txt'.format(ip)
-        print vaticFile, ' ', basePath
         sysCall = '(' + \
-                  'cd ~/vatic/vatic; ' + \
-                  'turkic dump {0} -o {1} --merge --merge-threshold 0.5;'.format(ip, vaticFile) + \
+                  'cd {0}; '.format(vaticPath) + \
+                  'turkic dump {0} -o {1} --merge --merge-threshold 0.5; '.format(ip, vaticFile) + \
                   'mv {0} {1}'.format(vaticFile, basePath)  + \
                   ')'
         os.system(sysCall)
