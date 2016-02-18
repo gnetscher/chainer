@@ -314,4 +314,3 @@ class Txt2Labels(ChainObject):
                 outList.append(inList)
 
         return iter(outList)
-
