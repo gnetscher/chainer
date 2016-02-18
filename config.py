@@ -2,6 +2,9 @@ from easydict import EasyDict as edict
 from os import path as osp
 import os
 from chainer_utils import utils as cu
+from pkg.pycaffe_utils import my_sqlite as msq
+
+DB = 'db/%s.sqlite'
 
 def get_basic_paths():
 	paths = edict()
@@ -69,11 +72,22 @@ def dataset2classnames(dataSet='pascal'):
 	return cls
 
 ##
+#Parameters for loading the image data
+def get_data_prms(**kwargs):
+	dArgs = edict()
+	dArgs.folderName    = 'nicks-house'
+	dArgs.subFolderName = 'Angle1Lighting1'
+	#Save the parameters in a database
+	dbFile  = DB % 'folder-data'
+	dArgs.prmStr = msq.get_sql_id(dbFile, dArgs)	
+	return dArgs
+
+##
 #Default arguments for rcnn
 def get_rcnn_prms(**kwargs):
 	dArgs = edict()
 	#Object class that needs to be detected
-	dArgs.targetClass = ['person']
+	dArgs.targetClass = 'person'
 	#NMS
 	dArgs.nmsThresh  = 0.3
 	#Detection Confidence
@@ -84,8 +98,12 @@ def get_rcnn_prms(**kwargs):
 	#The net to be used 
 	dArgs.netName    = 'vgg16-pascal-rcnn'
 	dArgs   = cu.get_defaults(kwargs, dArgs, True)
+	#Save the parameters in a database
+	dbFile  = DB % 'rcnn'
+	dArgs.prmStr = msq.get_sql_id(dbFile, dArgs)	
 	#verify that the target class is detectable by the model
 	allCls  = dataset2classnames(dArgs.trainDataSet)
-	assert set(dArgs.targetClass).issubset(set(allCls)),\
-		'%s cannot be detected' % dArgs.targetClass
+	assert dArgs.targetClass in allCls
+	#assert set(dArgs.targetClass).issubset(set(allCls)),\
+	#	'%s cannot be detected' % dArgs.targetClass
 	return dArgs	
