@@ -9,17 +9,17 @@ from os import path as osp
 
 #Sample image used in the demo
 def get_sample_imname():
-    imPath = '/mnt/HardDrive/data/try/outimg_Angle1Lighting1'
-    imName = osp.join(imPath, '0.jpg')
-    return imName
+	imPath = '/mnt/HardDrive/data/try/outimg_Angle1Lighting1'
+	imName = osp.join(imPath, '0.jpg')
+	return imName
 
 #Testing the File2Im Module
 def image_reader():
 
-    imName = get_sample_imname()
-    imProd = imc.File2Im()
-    im     = imProd.produce(imName)
-    return imProd
+	imName = get_sample_imname()
+	imProd = imc.File2Im()
+	im     = imProd.produce(imName)
+	return imProd
 
 def run_rcnn():
     imName = get_sample_imname()
