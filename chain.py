@@ -7,6 +7,9 @@ import easydict
 from easydict import EasyDict as edict
 import collections as co
 
+ITER_STOP_SYMBOL = 'ITER_STOP_SYMBOL'
+STOP_SYMBOLS     = [ITER_STOP_SYMBOL]
+
 class ChainObject(object):
     '''
 		Parent class for chaining 
@@ -37,6 +40,20 @@ class ChainObject(object):
     def produce(self, ip=None):
         return ip
 
+##
+#Chain Object subclass of type iterator
+class ChainObjectIter(ChainObject):
+	'''
+		Iterators return a stopsymbol if the iterator
+		has been exhausted
+	'''
+	_consumer_ = [type(None)]
+	_producer_ = [type(None)]
+
+	def __init__(self, prms=None):
+		ch.ChainObject.__init__(self, prms)
+		self.stopsymbol_ = ITER_STOP_SYMBOL
+
 
 class Chainer(object):
 	'''
@@ -50,6 +67,7 @@ class Chainer(object):
 							 of module 1 and output 1 of module 3 need to be
 								returned. Remembering first module is number 0. 
 		'''
+		self.isValid_   = True
 		self.chainObjs_ = []
 		if opData is None:
 			opData = [(-1,0)]
@@ -102,6 +120,10 @@ class Chainer(object):
 			arr = [None] * int(n)
 			self.ips_.append(arr)
 
+	#Is the chain producing valid outputs
+	def is_valid(self):
+		return self.isValid_
+
 	def produce(self, ip=None):
 		self.reset_ips()
 		ip = copy.deepcopy(ip)
@@ -112,6 +134,9 @@ class Chainer(object):
 				op = o.produce(modIp[0])
 			else:
 				op = o.produce(modIp)
+			if op in STOP_SYMBOLS:
+				self.isValid_ = False
+				return None
 			for mi in self.ip2opIdx_[n]:
 				#Determine the module that will take the current
 				#output as the input

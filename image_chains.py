@@ -49,14 +49,14 @@ class RGB2BGR(ch.ChainObject):
 
 ##
 #Consumes a directory and produces an iterator over images recursively searching all folders
-class DataDir2IterImNames(ch.ChainObject):
+class DataDir2IterImNames(ch.ChainObjectIter):
 	"""
 			assumes all images are jpg or png
 	"""
 	_consumer_ = [str]
 	_producer_ = [str]
 	def __init__(self, prms=None):
-		ch.ChainObject.__init__(self, prms)
+		ch.ChainObjectIter.__init__(self, prms)
 		self.isRead_ = False	
 		self.count_  = 0
 
@@ -70,10 +70,13 @@ class DataDir2IterImNames(ch.ChainObject):
 									path = os.path.join(head, '*.' + extn)
 									for img in glob.glob(path):
 											self.imlist_.append(img)
+			self.N_ = len(self.imlist_)
 
 	def produce(self, ip=None):
 		if not self.isRead_:
 			self._read(ip)
+		if self.count_ >= self.N_:
+			return self.stopsymbol_ 
 		imName = self.imlist_[self.count_]
 		self.count_ += 1
 		return imName
