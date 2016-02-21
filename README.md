@@ -9,13 +9,13 @@ The convention for creating a module is at this wiki [page.] (https://github.com
 Chaining is explained throuth the example of using RCNN for object detection. 
 ```python
 dataSrc  = dc.GetDataDir()
-	src2Name = imc.DataDir2IterImNames()
-	name2Im  = imc.File2Im()
-	bgr      = imc.RGB2BGR()
-	rcnn     = cc.Im2PersonDet()
-	imKey    = mc.File2SplitLast()
-	chain    = ch.Chainer([dataSrc, src2Name, name2Im, bgr,\
-             rcnn, (imKey, [(1,0)])], opData=[(-1,0),(-2,1)])
+src2Name = imc.DataDir2IterImNames()
+name2Im  = imc.File2Im()
+bgr      = imc.RGB2BGR()
+rcnn     = cc.Im2PersonDet()
+imKey    = mc.File2SplitLast()
+chain    = ch.Chainer([dataSrc, src2Name, name2Im, bgr,\
+           rcnn, (imKey, [(1,0)])], opData=[(-1,0),(-2,1)])
 ```
 
 
