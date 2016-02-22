@@ -43,15 +43,16 @@ def run_rcnn_iter():
 
 
 def save_rcnn_op():
-    dataSrc  = dc.GetDataDir()
-    src2Name = imc.DataDir2IterImNames()
-    name2Im  = imc.File2Im()
-    bgr      = imc.RGB2BGR()
-    rcnn     = cc.Im2PersonDet()
-    imKey    = mc.File2SplitLast()
-    chain    = ch.Chainer([dataSrc, src2Name, name2Im, bgr,\
-             rcnn, (imKey, [(1,0)])], opData=[(-1,0),(-2,1)])
-    return chain
+
+	dataSrc  = dc.GetDataDir()
+	src2Name = imc.DataDir2IterImNames()
+	name2Im  = imc.File2Im()
+	bgr      = imc.RGB2BGR()
+	rcnn     = cc.Im2PersonDet()
+	imKey    = mc.File2SplitLast()
+	chain    = ch.Chainer([dataSrc, src2Name, name2Im, bgr,\
+             rcnn, (imKey, [(1,0)])], opData=[(-1,0),(-2,0)])
+	return chain
 
 def run_test():
     # vidPath = 'try/Falls_Angle1Lighting1.mp4'
