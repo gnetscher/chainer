@@ -1,3 +1,4 @@
+import pdb
 import chain as ch
 import glob
 import shutil
@@ -70,6 +71,12 @@ class DataDir2IterImNames(ch.ChainObjectIter):
 									path = os.path.join(head, '*.' + extn)
 									for img in glob.glob(path):
 											self.imlist_.append(img)
+					else:
+						head = str(dirpath)
+						for extn in extns:
+							path = os.path.join(head, '*.' + extn)
+							for img in glob.glob(path):
+								self.imlist_.append(img)
 			self.N_ = len(self.imlist_)
 
 	def produce(self, ip=None):

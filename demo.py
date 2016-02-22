@@ -71,11 +71,16 @@ def save_rcnn_vatic():
 	opName = 'vatic_person_det.pkl' 
 	save_rcnn_op(dataFn, opName)
 
-
 def save_rcnn_demo():
 	dataFn = dc.GetDataDirDemo()
 	opName = 'demo_person_det.pkl'
 	save_rcnn_op(dataFn, opName)
+
+def save_rcnn_mpii():
+	dataFn = dc.GetDataDirMPII()
+	opName = 'mpii_person_det.pkl'
+	save_rcnn_op(dataFn, opName)
+
 
 
 def run_test():
