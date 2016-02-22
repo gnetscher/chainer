@@ -23,24 +23,24 @@ def image_reader():
 	return imProd
 
 def run_rcnn():
-    imName = get_sample_imname()
-    imProd = imc.File2Im()
-    bgr    = imc.RGB2BGR()
-    rcnn   = cc.Im2RCNNDet()
-    chain  = ch.Chainer([imProd, bgr, rcnn])
-    im, allDet = chain.produce(imName)
-    return im, allDet
+	imName = get_sample_imname()
+	imProd = imc.File2Im()
+	bgr    = imc.RGB2BGR()
+	rcnn   = cc.Im2RCNNDet()
+	chain  = ch.Chainer([imProd, bgr, rcnn])
+	im, allDet = chain.produce(imName)
+	return im, allDet
 
 
 def run_rcnn_iter():
-    dataSrc   = dc.GetDataDir()
-    src2Im    = imc.DataDir2IterIms()
-    bgr       = imc.RGB2BGR()
-    rcnn   = cc.Im2PersonDet()
-    vis    = vc.VisImBBox()
-    chain  = ch.Chainer([dataSrc, src2Im, bgr, rcnn,
-                     (vis, [[1,0],[-1,0]])])
-    return chain
+	dataSrc   = dc.GetDataDir()
+	src2Im    = imc.DataDir2IterIms()
+	bgr       = imc.RGB2BGR()
+	rcnn   = cc.Im2PersonDet()
+	vis    = vc.VisImBBox()
+	chain  = ch.Chainer([dataSrc, src2Im, bgr, rcnn,
+					 (vis, [[1,0],[-1,0]])])
+	return chain
 
 
 def save_rcnn_op(dataFn, opName):
@@ -52,7 +52,7 @@ def save_rcnn_op(dataFn, opName):
 	rcnn     = cc.Im2PersonDet()
 	imKey    = mc.File2SplitLast()
 	chain    = ch.Chainer([dataSrc, src2Name, name2Im, bgr,\
-             rcnn, (imKey, [(1,0)])], opData=[(-1,0),(-2,0)])
+			 rcnn, (imKey, [(1,0)])], opData=[(-1,0),(-2,0)])
 	count = 0
 	data  = []
 	while True:
@@ -84,37 +84,47 @@ def save_rcnn_mpii():
 
 
 def run_test():
-    # vidPath = 'try/Falls_Angle1Lighting1.mp4'
-    # imProd  = ch.Video2Ims()
-    # imPath  = imProd.produce(vidPath)
-    # itProd  = ch.ImDataDir()
-    # list_   = itProd.produce(imPath)
-    # for i, item in enumerate(list_):
-    #     print '~~~~Image {0}~~~~'.format(i)
-    #     print item
+	# vidPath = 'try/Falls_Angle1Lighting1.mp4'
+	# imProd  = ch.Video2Ims()
+	# imPath  = imProd.produce(vidPath)
+	# itProd  = ch.ImDataDir()
+	# list_   = itProd.produce(imPath)
+	# for i, item in enumerate(list_):
+	#     print '~~~~Image {0}~~~~'.format(i)
+	#     print item
 
-    # vaticID = 'Angle1Lighting1'
-    # vaticProd = ch.Ims2Txt()
-    # txtPath = vaticProd.produce(vaticID)
-    txtPath   = './try/output_Angle1Lighting1.txt'
-    labelProd = ch.Txt2Labels()
-    actual    = labelProd.produce(txtPath)
-    mapProd   = ch.Labels2mAP([['onfloor', 'falling'], 'or'])
-    # test vatic output against itself by giving each ground truth a confidence score of 1
-    predicted = []
-    for frame in actual:
-        inFrame = []
-        for object in frame:
-            inObject = object[:]
-            inObject += (1.0,)
-            inFrame.append(inObject)
-        predicted.append(inFrame)
+	# vaticID = 'Angle1Lighting1'
+	# vaticProd = ch.Ims2Txt()
+	# txtPath = vaticProd.produce(vaticID)
+	txtPath   = './try/output_Angle1Lighting1.txt'
+	labelProd = ch.Txt2Labels()
+	actual    = labelProd.produce(txtPath)
+	mapProd   = ch.Labels2mAP([['onfloor', 'falling'], 'or'])
+	# test vatic output against itself by giving each ground truth a confidence score of 1
+	predicted = []
+	for frame in actual:
+		inFrame = []
+		for object in frame:
+			inObject = object[:]
+			inObject += (1.0,)
+			inFrame.append(inObject)
+		predicted.append(inFrame)
 
-    testOut   = mapProd.produce((actual, predicted))
-    print testOut
+	testOut   = mapProd.produce((actual, predicted))
+	print testOut
 
+def test_cropping():
+	picklePath = './tmp/person_det.pkl'
+	imageDir   = './tmp/'
+	cropProd   = imc.Detection2Ims(imageDir)
+	print cropProd.produce(picklePath)
 
+def test_vis_cropping():
+	picklePath = './tmp/person_det.pkl'
+	imageDir   = './tmp/'
+	visProd    = vc.VisDetections(imageDir)
+	visProd.produce(picklePath)
 
 
 if __name__ == '__main__':
-    run_test()
+	test_vis_cropping()
