@@ -62,7 +62,7 @@ def save_rcnn_op(dataFn, opName):
 		data.append([frame, 'person', bbox])
 		count += 1
 		print (count)
-	pickle.dump({'person_det': data}, open(opName, 'w'))
+	pickle.dump({'person_det': data}, open(opFile, 'w'))
 
 
 def save_rcnn_vatic():

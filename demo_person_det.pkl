@@ -1,5 +1,0 @@
-(dp0
-S'person_det'
-p1
-(lp2
-s.
