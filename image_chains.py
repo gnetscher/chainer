@@ -9,6 +9,8 @@ from os import path as osp
 import scipy.misc as scm
 import easydict
 from easydict import EasyDict as edict
+import pickle
+import matplotlib.pyplot as plt
 
 ##
 #Consumes and produces image data
@@ -157,3 +159,37 @@ class Video2Ims(ch.ChainObject):
             shutil.rmtree(op_dir)
             raise
         return op_dir
+
+##
+#Consumes a pickle detection filepath and produces a list of cropped images
+class Detection2Ims(ch.ChainObject):
+
+    _consumer_ = str
+    _producer_ = [np.array]
+
+    def __init__(self, prms=None):
+        self.basePath = prms
+        ch.ChainObject.__init__(self, prms)
+
+    def produce(self, ip):
+        detectDict = pickle.load(open(ip, 'rb'))
+        cropdIms = []
+        for detected in detectDict:
+            for frame in detectDict[detected]:
+                # find image frame
+                filename  = '{:06d}.jpg'.format(int(frame[0]))
+                imagePath = os.path.join(self.basePath, filename)
+                im = plt.imread(imagePath)
+
+                # find objects within frame
+                objMat   = frame[2]
+                for row in objMat:
+                    xmin = round(row[0])
+                    ymin = round(row[1])
+                    xmax = round(row[2])
+                    ymax = round(row[3])
+                    cropdIm = im[ymin:ymax, xmin:xmax,:]
+                    cropdIms.append(cropdIm)
+
+        return cropdIms
+

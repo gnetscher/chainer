@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import chain as ch
 from chainer_utils import utils as cu
 from easydict import EasyDict as edict
+import pickle
+import os
 
 class VisImBBox(ch.ChainObject):
 	_consumer_ = [tuple]
@@ -30,5 +32,31 @@ class VisImBBox(ch.ChainObject):
 			self.prms_.ax.plot([x2, x1], [y1, y1], **self.prms_.drawOpts)
 		plt.tight_layout()
 		plt.draw()
-		plt.show()	
-				
+		plt.show()
+
+##
+#Consumes a pickle detection filepath and visualizes the detection
+class VisDetections(ch.ChainObject):
+
+	_consumer_ = [str]
+	_producer_ = [None]
+
+	def __init__(self, prms=None):
+		# initialize with image directory
+		self.basePath = prms
+		ch.ChainObject.__init__(self, prms)
+
+	def produce(self, ip):
+		detectDict = pickle.load(open(ip, 'rb'))
+		visIB = VisImBBox()
+		for detected in detectDict:
+			for frame in detectDict[detected]:
+				# find image frame
+				filename  = '{:06d}.jpg'.format(int(frame[0]))
+				imagePath = os.path.join(self.basePath, filename)
+				im = plt.imread(imagePath)
+
+				# show objects within frame
+				objMat   = frame[2]
+				visIB.produce((im, objMat))
+
