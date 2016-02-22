@@ -19,7 +19,7 @@ def get_datadirs():
 class GetDataDir(ch.ChainObject):
 	_consumer_ = [None]
 	_producer_ = [str]
-	def __init__(self, prms={}):
+	def __init__(self, prms=edict()):
 		dArgs = edict()
 		ch.ChainObject.__init__(self, prms)
 	
@@ -29,7 +29,7 @@ class GetDataDir(ch.ChainObject):
 ##
 #Return data directory for vatic
 class GetDataDirVatic(GetDataDir):
-	def __init__(self, prms={}):
+	def __init__(self, prms=edict()):
 		dArgs.folderName    = 'nicks-house'
 		dArgs.subFolderName = 'Angle1Lighting1'
 		prms = cu.get_defaults(prms, dArgs, True)
@@ -41,18 +41,17 @@ class GetDataDirVatic(GetDataDir):
 ##
 #Return data directory for MPII
 class GetDataDirMPII(GetDataDir):
- def __init__(self, prms={}):
+ def __init__(self, prms=edict()):
 	GetDataDir.__init__(self, prms)
+	pths = get_datadirs()
 	self.prms_.dirName = osp.join(pths.dsets, 'mpii', 'images')
 
 
 ##
 #Return data directory for demo experiments
 class GetDataDirDemo(GetDataDir):
- def __init__(self, prms={}):
+ def __init__(self, prms=edict()):
 	GetDataDir.__init__(self, prms)
+	pths = get_datadirs()
 	self.prms_.dirName = osp.join(pths.dsets, 'demo', 'images')
 
-
-
-	

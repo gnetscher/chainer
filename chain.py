@@ -124,28 +124,32 @@ class Chainer(object):
 	def is_valid(self):
 		return self.isValid_
 
+	#Check if stop symbol has been produced or not
+	def _check_stop(self, op):
+		if type(op) in [tuple, list]:
+			for opt in op:
+				if type(opt) in [str] and opt in STOP_SYMBOLS:
+					self.isValid_ = False
+			else:
+				if type(op) in [str]:
+					if op in STOP_SYMBOLS:
+						self.isValid_ = False
+
+
 	def produce(self, ip=None):
 		self.reset_ips()
 		ip = copy.deepcopy(ip)
 		self.ips_[0] = [ip]
 		for n, o in enumerate(self.chainObjs_):
 			modIp = self.ips_[n]
+			#Check for the production of a STOP Symbol
+			self._check_stop(modIp)
+			if not self.isValid_:
+				return None
 			if len(modIp) == 1:
 				op = o.produce(modIp[0])
 			else:
 				op = o.produce(modIp)
-			#Check if we need stop by checking if any
-			#module produced a stop_symbol
-			if type(op) in [tuple, list]:
-				for opt in op:
-					if type(opt) in ['str'] and opt in STOP_SYMBOLS:
-						self.isValid_ = False
-						return None
-			else:
-				if type(op) in ['str']:
-					if op in STOP_SYMBOLS:
-						self.isValid_ = False
-						return None
 			for mi in self.ip2opIdx_[n]:
 				#Determine the module that will take the current
 				#output as the input
