@@ -20,7 +20,6 @@ class GetDataDir(ch.ChainObject):
 	_consumer_ = [None]
 	_producer_ = [str]
 	def __init__(self, prms=edict()):
-		dArgs = edict()
 		ch.ChainObject.__init__(self, prms)
 	
 	def produce(self, ip=None):
@@ -30,6 +29,7 @@ class GetDataDir(ch.ChainObject):
 #Return data directory for vatic
 class GetDataDirVatic(GetDataDir):
 	def __init__(self, prms=edict()):
+		dArgs = edict()
 		dArgs.folderName    = 'nicks-house'
 		dArgs.subFolderName = 'Angle1Lighting1'
 		prms = cu.get_defaults(prms, dArgs, True)
