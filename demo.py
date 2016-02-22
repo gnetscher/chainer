@@ -6,6 +6,7 @@ import misc_chains as mc
 import data_chains as dc
 import vis_chains as vc
 from os import path as osp
+import pickle
 
 #Sample image used in the demo
 def get_sample_imname():
@@ -50,7 +51,17 @@ def save_rcnn_op():
 	imKey    = mc.File2SplitLast()
 	chain    = ch.Chainer([dataSrc, src2Name, name2Im, bgr,\
              rcnn, (imKey, [(1,0)])], opData=[(-1,0),(-2,0)])
-	return chain
+	count = 0
+	data  = []
+	while True:
+		op = chain.produce()
+		if op is None:
+			break
+		frame, bbox = op	
+		data.append([frame, 'person', bbox])
+		count += 1
+		print (count)
+	pickle.dump({'person_det': data}, open('tmp/person_det.pkl', 'w'))
 
 def run_test():
     # vidPath = 'try/Falls_Angle1Lighting1.mp4'
