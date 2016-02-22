@@ -43,9 +43,9 @@ def run_rcnn_iter():
     return chain
 
 
-def save_rcnn_op():
-
-	dataSrc  = dc.GetDataDir()
+def save_rcnn_op(dataFn, opName):
+	opFile   = osp.join('tmp', opName)
+	dataSrc  = dataFn
 	src2Name = imc.DataDir2IterImNames()
 	name2Im  = imc.File2Im()
 	bgr      = imc.RGB2BGR()
@@ -53,7 +53,30 @@ def save_rcnn_op():
 	imKey    = mc.File2SplitLast()
 	chain    = ch.Chainer([dataSrc, src2Name, name2Im, bgr,\
              rcnn, (imKey, [(1,0)])], opData=[(-1,0),(-2,0)])
-	return chain
+	count = 0
+	data  = []
+	while True:
+		op = chain.produce()
+		if op is None:
+			break
+		frame, bbox = op	
+		data.append([frame, 'person', bbox])
+		count += 1
+		print (count)
+	pickle.dump({'person_det': data}, open(opFile, 'w'))
+
+
+def save_rcnn_vatic():
+	dataFn = dc.GetDataDirVatic()
+	opName = 'vatic_person_det.pkl' 
+	save_rcnn_op(dataFn, opName)
+
+
+def save_rcnn_demo():
+	dataFn = dc.GetDataDirDemo()
+	opName = 'demo_person_det.pkl'
+	save_rcnn_op(dataFn, opName)
+
 
 def run_test():
     # vidPath = 'try/Falls_Angle1Lighting1.mp4'

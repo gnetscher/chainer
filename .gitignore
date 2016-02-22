@@ -6,3 +6,4 @@ try/*
 *.jpg
 *.DS_Store
 tmp/*
+*.pkl
