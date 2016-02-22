@@ -6,6 +6,7 @@ import misc_chains as mc
 import data_chains as dc
 import vis_chains as vc
 from os import path as osp
+import pickle
 
 #Sample image used in the demo
 def get_sample_imname():
@@ -84,7 +85,11 @@ def run_test():
     testOut   = mapProd.produce((actual, predicted))
     print testOut
 
-
+def test_cropping():
+	picklePath = './tmp/person_det.pkl'
+	imageDir   = './tmp/'
+	cropProd   = imc.Detection2Ims(imageDir)
+	cropProd.produce(picklePath)
 
 
 if __name__ == '__main__':
