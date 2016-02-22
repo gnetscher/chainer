@@ -51,7 +51,7 @@ class ChainObjectIter(ChainObject):
 	_producer_ = [type(None)]
 
 	def __init__(self, prms=None):
-		ch.ChainObject.__init__(self, prms)
+		ChainObject.__init__(self, prms)
 		self.stopsymbol_ = ITER_STOP_SYMBOL
 
 
@@ -134,9 +134,18 @@ class Chainer(object):
 				op = o.produce(modIp[0])
 			else:
 				op = o.produce(modIp)
-			if op in STOP_SYMBOLS:
-				self.isValid_ = False
-				return None
+			#Check if we need stop by checking if any
+			#module produced a stop_symbol
+			if type(op) in [tuple, list]:
+				for opt in op:
+					if type(opt) in ['str'] and opt in STOP_SYMBOLS:
+						self.isValid_ = False
+						return None
+			else:
+				if type(op) in ['str']:
+					if op in STOP_SYMBOLS:
+						self.isValid_ = False
+						return None
 			for mi in self.ip2opIdx_[n]:
 				#Determine the module that will take the current
 				#output as the input
@@ -144,7 +153,12 @@ class Chainer(object):
 				if type(op) == tuple:
 					tmpOp = copy.deepcopy(op[ipNum])
 				else:
-					assert ipNum == 0, 'Previous module produces only 1 o/p'
+					try:
+						assert ipNum == 0, 'Previous module produces only 1 o/p'
+					except:
+						print ("ERROR")
+						print modNum, ipNum, ipLoc, n
+						return
 					tmpOp = copy.deepcopy(op)
 				self.ips_[modNum][ipLoc] = tmpOp 
 		return self.ips_[self.N_-1]
