@@ -114,6 +114,13 @@ def test_cropping():
 	cropProd   = imc.Detection2Ims(imageDir)
 	cropProd.produce(picklePath)
 
+def test_issue21():
+	import data_chains as dc
+	import image_chains as imc
+	dmDir = dc.GetDataDirDemo()
+	imIter = imc.DataDir2IterImNames()
+	print imIter.produce(dmDir)
+
 
 if __name__ == '__main__':
-    run_test()
+    test_issue21()
