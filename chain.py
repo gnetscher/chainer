@@ -6,6 +6,8 @@ import scipy.misc as scm
 import easydict
 from easydict import EasyDict as edict
 import collections as co
+import types
+import itertools
 
 ITER_STOP_SYMBOL = 'ITER_STOP_SYMBOL'
 STOP_SYMBOLS     = [ITER_STOP_SYMBOL]
@@ -38,7 +40,7 @@ class ChainObject(object):
 
 	#The output of the instance
 	def produce(self, ip=None):
-		return ip
+		yield ip
 
 ##
 #Chain Object subclass of type iterator
@@ -141,21 +143,30 @@ class Chainer(object):
 		ip = copy.deepcopy(ip)
 		self.ips_[0] = [ip]
 		for n, o in enumerate(self.chainObjs_):
-			modIp = self.ips_[n]
-			#Check for the production of a STOP Symbol
-			self._check_stop(modIp)
+			if n == len(self.chainObjs_) - 1:
+				# not sure why, but final iteration just passes through chain object base class
+				break
+			modIp = self.ips_[n][0]
 			if not self.isValid_:
 				return None
-			if len(modIp) == 1:
-				op = o.produce(modIp[0])
+			if isinstance(modIp, types.GeneratorType) or isinstance(modIp, itertools.chain):
+				op = ()
+				# expect modIp to be a generator
+				for inp in modIp:
+					nOp = o.produce(inp)
+					op = itertools.chain(op, nOp)
 			else:
+				# not generator
 				op = o.produce(modIp)
+
 			for mi in self.ip2opIdx_[n]:
 				#Determine the module that will take the current
 				#output as the input
 				modNum, ipNum, ipLoc = mi
 				if type(op) == tuple:
 					tmpOp = copy.deepcopy(op[ipNum])
+				elif isinstance(op, types.GeneratorType) or isinstance(op, itertools.chain):
+					tmpOp = op  # if really need copy, use: tmpOp, op = itertools.tee(op)
 				else:
 					try:
 						assert ipNum == 0, 'Previous module produces only 1 o/p'
@@ -165,4 +176,4 @@ class Chainer(object):
 						return
 					tmpOp = copy.deepcopy(op)
 				self.ips_[modNum][ipLoc] = tmpOp
-		return self.ips_[self.N_-1]
+		return list(self.ips_[self.N_-1][0])

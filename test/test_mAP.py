@@ -54,7 +54,7 @@ class TestAveragePrecision(unittest.TestCase):
 
 	def test_mAP_VATIC(self):
 		BASE_DIR  = os.path.dirname(__file__)
-		txtPath   = os.path.join(BASE_DIR, 'try/output_Angle1Lighting1.txt')
+		txtPath   = os.path.join(BASE_DIR, '../try/output_Angle1Lighting1.txt')
 		labelProd = Txt2Labels()
 		actual    = labelProd.produce(txtPath)
 		mapProd   = Labels2mAP([['onfloor', 'falling'], 'or'])

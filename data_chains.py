@@ -23,7 +23,7 @@ class GetDataDir(ch.ChainObject):
 		ch.ChainObject.__init__(self, prms)
 	
 	def produce(self, ip=None):
-		return self.prms_.dirName
+		yield self.prms_.dirName
 
 ##
 #Return data directory for vatic
@@ -41,17 +41,17 @@ class GetDataDirVatic(GetDataDir):
 ##
 #Return data directory for MPII
 class GetDataDirMPII(GetDataDir):
- def __init__(self, prms=edict()):
-	GetDataDir.__init__(self, prms)
-	pths = get_datadirs()
-	self.prms_.dirName = osp.join(pths.dsets, 'mpii', 'images')
+	def __init__(self, prms=edict()):
+		GetDataDir.__init__(self, prms)
+		pths = get_datadirs()
+		self.prms_.dirName = osp.join(pths.dsets, 'mpii', 'images')
 
 
 ##
 #Return data directory for demo experiments
 class GetDataDirDemo(GetDataDir):
- def __init__(self, prms=edict()):
-	GetDataDir.__init__(self, prms)
-	pths = get_datadirs()
-	self.prms_.dirName = osp.join(pths.dsets, 'demo', 'images')
+	def __init__(self, prms=edict()):
+		GetDataDir.__init__(self, prms)
+		pths = get_datadirs()
+		self.prms_.dirName = osp.join(pths.dsets, 'demo', 'images')
 

@@ -6,7 +6,7 @@ The convention for creating a module is at this wiki [page.] (https://github.com
 
 ###Chaining modules to perform complex operations
 
-Chaining is explained throuth the example of using RCNN for object detection. 
+Chaining is explained through the example of using RCNN for object detection. 
 ```python
 dataSrc  = dc.GetDataDir()
 src2Name = imc.DataDir2IterImNames()

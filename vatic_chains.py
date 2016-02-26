@@ -29,7 +29,7 @@ class Ims2Txt(ChainObject):
 				  'mv {0} {1}'.format(vaticFile, basePath)  + \
 				  ')'
 		os.system(sysCall)
-		return os.path.join(basePath, vaticFile)
+		yield os.path.join(basePath, vaticFile)
 
 ##
 # Consumes a vatic text file path and returns list [frame, [box coordinates], label, (attributes)]
@@ -85,4 +85,4 @@ class Txt2Labels(ChainObject):
 			else:
 				oRow.append(tuple(vRow))
 
-		return outList
+		yield outList

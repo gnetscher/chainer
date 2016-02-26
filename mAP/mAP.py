@@ -133,7 +133,7 @@ def calc_AP(gtl, pdl, k=1):
     # kaggle ap calc
     for i,p in enumerate(pdl):
         if p in gtl:
-        # for single classification task use: if p in gtl and and p not in pdl[:i]:
+        # for single classification task use: if p in gtl and p not in pdl[:i]:
             num_hits += 1.0
             score += num_hits / (i+1.0)
 

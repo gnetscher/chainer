@@ -4,7 +4,7 @@ import config as cfg
 import numpy as np
 import copy
 from fast_rcnn.test import im_detect
-from fast_rcnn.nms_wrapper import nms 
+from fast_rcnn.nms_wrapper import nms
 from easydict import EasyDict as edict
 
 ##
@@ -13,25 +13,25 @@ class Im2RCNNDet(ch.ChainObject):
 	_consumer_ = [np.ndarray]
 	_producer_ = [np.ndarray]
 	def __init__(self, prms={}):
-		prms = cfg.get_rcnn_prms(**prms)	
+		prms = cfg.get_rcnn_prms(**prms)
 		ch.ChainObject.__init__(self, prms)
 		self.setup_net()
 
 	def setup_net(self):
 		caffe.set_mode_gpu()
 		caffe.set_device(0)
-		netFiles  = cfg.get_caffe_net_files(self.prms_.netName)	
-		self.net_ = caffe.Net(netFiles.deployFile, 
+		netFiles  = cfg.get_caffe_net_files(self.prms_.netName)
+		self.net_ = caffe.Net(netFiles.deployFile,
 				netFiles.netFile, caffe.TEST)
-		self.cls_ = cfg.dataset2classnames(self.prms_.trainDataSet) 
-	
+		self.cls_ = cfg.dataset2classnames(self.prms_.trainDataSet)
+
 	def produce(self, ip):
 		scores, bbox   = im_detect(self.net_, ip)
 		#Find the top class for each box
 		bestClass  = np.argmax(scores,axis=1)
 		bestScore  = np.max(scores, axis=1)
 		allDet     = edict()
-		for cl in [self.prms_.targetClass]:	
+		for cl in [self.prms_.targetClass]:
 			clsIdx = self.cls_.index(cl)
 			#Get all the boxes that belong to the desired class
 			idx    = bestClass == clsIdx
@@ -52,7 +52,7 @@ class Im2RCNNDet(ch.ChainObject):
 			#Only keep detections with high confidence
 			inds = np.where(dets[:, -1] >= self.prms_.confThresh)[0]
 			allDet[cl]   = copy.deepcopy(dets[inds])
-		return allDet
+		yield allDet
 
 ##
 #Consumes image and produces detection of people
@@ -62,5 +62,5 @@ class Im2PersonDet(Im2RCNNDet):
 
 	def produce(self, ip):
 		allDet = super(Im2PersonDet, self).produce(ip)
-		return allDet['person']
-		
+		yield allDet['person']
+

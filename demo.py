@@ -5,6 +5,8 @@ import image_chains as imc
 import misc_chains as mc
 import data_chains as dc
 import vis_chains as vc
+import metric_chains as mec
+import vatic_chains as vac
 from os import path as osp
 import pickle
 
@@ -51,7 +53,7 @@ def save_rcnn_op(dataFn, opName):
 	bgr      = imc.RGB2BGR()
 	rcnn     = cc.Im2PersonDet()
 	imKey    = mc.File2SplitLast()
-	chain    = ch.Chainer([dataSrc, src2Name, name2Im, bgr,\
+	chain    = ch.Chainer([dataSrc, src2Name, name2Im, bgr, \
 			 rcnn, (imKey, [(1,0)])], opData=[(-1,0),(-2,0)])
 	count = 0
 	data  = []
@@ -97,9 +99,9 @@ def run_test():
 	# vaticProd = ch.Ims2Txt()
 	# txtPath = vaticProd.produce(vaticID)
 	txtPath   = './try/output_Angle1Lighting1.txt'
-	labelProd = ch.Txt2Labels()
+	labelProd = vac.Txt2Labels()
 	actual    = labelProd.produce(txtPath)
-	mapProd   = ch.Labels2mAP([['onfloor', 'falling'], 'or'])
+	mapProd   = mec.Labels2mAP([['onfloor', 'falling'], 'or'])
 	# test vatic output against itself by giving each ground truth a confidence score of 1
 	predicted = []
 	for frame in actual:
@@ -125,6 +127,15 @@ def test_vis_cropping():
 	visProd    = vc.VisDetections(imageDir)
 	visProd.produce(picklePath)
 
+def test_it_handling():
+	# to test fix for issue #6
+	src2Name = imc.DataDir2IterImNames()
+	name2Im  = imc.File2Im()
+	bgr      = imc.RGB2BGR()
+	chain    = ch.Chainer([src2Name, name2Im, bgr])
+	for x in chain.produce('./tmp/'):
+		print x
+
 
 if __name__ == '__main__':
-	test_vis_cropping()
+	test_it_handling()

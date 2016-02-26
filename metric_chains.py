@@ -80,7 +80,7 @@ class Labels2mAP(ChainObject):
 			pd.append(inList)
 
 		mAP = evaluate_mAP(gt, pd)
-		return mAP
+		yield mAP
 
 
 

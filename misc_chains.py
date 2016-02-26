@@ -20,7 +20,7 @@ class File2SplitLast(ch.ChainObject):
         ch.ChainObject.__init__(self, prms)
 
     def produce(self, ip):
-        return osp.basename(ip).split('.')[0]
+        yield osp.basename(ip).split('.')[0]
        
 
 
